@@ -118,10 +118,7 @@ void insertKeyword(struct HashMap *table, char *key, TokenType token) {
 }
 
 
-/*---------------------------------------------------------------------------
- Function: populateKeywordTable
- Purpose : Inserts all default keywords (as per language specification) into the hash table.
----------------------------------------------------------------------------*/
+
 void populateKeywordTable(struct HashMap *table) {
     insertKeyword(table, "with", TK_WITH);
     insertKeyword(table, "parameters", TK_PARAMETERS);

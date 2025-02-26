@@ -169,7 +169,7 @@ void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int nt
                         for (int altSub2 = 0; altSub2 < grammar.rules[nextSymbolIndex].numAlternatives; altSub2++) {
                             for (int firstElemIndex2 = 0; firstElemIndex2 < firstFollow[nextSymbolIndex].numFirst[altSub2]; firstElemIndex2++) {
                                 if (firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2] != 0) {
-                                    if (isInArr(firstFollow[ntIndex].first[altIndex], firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                                    if (isInArray(firstFollow[ntIndex].first[altIndex], firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
                                         firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
                                         firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2];
                                         firstFollow[ntIndex].numFirst[altIndex]++;
@@ -204,7 +204,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
                             if (ffSet[ruleIdx].numFollow == 0)
                                 computeIndividualFollow(grammar, ffSet, ruleIdx, ntIdx);
                             for (int f = 0; f < ffSet[ruleIdx].numFollow; f++) {
-                                if (isInArr(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
+                                if (isInArray(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
                                     ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
                                     ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[ruleIdx].follow[f];
                                     ffSet[ntIdx].numFollow++;

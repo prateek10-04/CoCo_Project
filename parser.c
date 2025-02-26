@@ -186,3 +186,123 @@ void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int nt
         }
     }
 }
+void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, int prevIdx) {
+    if (ntIdx == 0) {
+        ffSet[ntIdx].follow = (int*)malloc(sizeof(int));
+        ffSet[ntIdx].follow[0] = grammar.numTerminals - 1;
+        ffSet[ntIdx].numFollow = 1;
+    }
+    for (int ruleIdx = grammar.totalRules - 1; ruleIdx >= 0; ruleIdx--) {
+        for (int altIdx = 0; altIdx < grammar.rules[ruleIdx].numAlternatives; altIdx++) {
+            for (int symIdx = 0; symIdx < grammar.rules[ruleIdx].alternatives[altIdx].count; symIdx++) {
+                if (symIdx == grammar.rules[ruleIdx].alternatives[altIdx].count - 1) {
+                    if (grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx].symbolType == 0 &&
+                        grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx].value == ntIdx) {
+                        if (ruleIdx != ntIdx) {
+                            if (prevIdx == ruleIdx)
+                                break;
+                            if (ffSet[ruleIdx].numFollow == 0)
+                                computeIndividualFollow(grammar, ffSet, ruleIdx, ntIdx);
+                            for (int f = 0; f < ffSet[ruleIdx].numFollow; f++) {
+                                if (isInArr(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
+                                    ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                    ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[ruleIdx].follow[f];
+                                    ffSet[ntIdx].numFollow++;
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
+                if (grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx].symbolType == 0 &&
+                    grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx].value == ntIdx) {
+                    if (grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].symbolType == 1) {
+                        if (ffSet[ntIdx].numFollow == 0) {
+                            ffSet[ntIdx].follow = (int*)malloc(sizeof(int));
+                            ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value;
+                            ffSet[ntIdx].numFollow++;
+                        }
+                        else {
+                            if (isInArr(ffSet[ntIdx].follow, grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value, ffSet[ntIdx].numFollow) != 1) {
+                                ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value;
+                                ffSet[ntIdx].numFollow++;
+                            }
+                        }
+                        continue;
+                    }
+                    else {
+                        int nextNt = grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value;
+                        if (ffSet[nextNt].numFirst[0] == 0)
+                            computeIndividualFirst(grammar, ffSet, nextNt);
+                        for (int m = 0; m < grammar.rules[nextNt].numAlternatives; m++) {
+                            for (int g = 0; g < ffSet[nextNt].numFirst[m]; g++) {
+                                if (ffSet[nextNt].first[m][g] != 0) {
+                                    if (ffSet[ntIdx].numFollow == 0) {
+                                        ffSet[ntIdx].follow = (int*)malloc(sizeof(int));
+                                        ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[nextNt].first[m][g];
+                                        ffSet[ntIdx].numFollow++;
+                                    }
+                                    else {
+                                        if (isInArr(ffSet[ntIdx].follow, ffSet[nextNt].first[m][g], ffSet[ntIdx].numFollow) != 1) {
+                                            ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                            ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[nextNt].first[m][g];
+                                            ffSet[ntIdx].numFollow++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (grammar.rules[nextNt].hasEpsilon != 1)
+                            continue;
+                        else {
+                            int idx = symIdx + 2;
+                            while (idx < grammar.rules[ruleIdx].alternatives[altIdx].count) {
+                                int followNt = grammar.rules[ruleIdx].alternatives[altIdx].symbols[idx].value;
+                                if (grammar.rules[ruleIdx].alternatives[altIdx].symbols[idx].symbolType == 1) {
+                                    if (isInArr(ffSet[ntIdx].follow, followNt, ffSet[ntIdx].numFollow) != 1) {
+                                        ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                        ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = followNt;
+                                        ffSet[ntIdx].numFollow++;
+                                    }
+                                    break;
+                                }
+                                else {
+                                    if (ffSet[followNt].numFirst[0] == 0)
+                                        computeIndividualFirst(grammar, ffSet, followNt);
+                                    for (int m = 0; m < grammar.rules[followNt].numAlternatives; m++) {
+                                        for (int g = 0; g < ffSet[followNt].numFirst[m]; g++) {
+                                            if (ffSet[followNt].first[m][g] != 0) {
+                                                if (isInArr(ffSet[ntIdx].follow, ffSet[followNt].first[m][g], ffSet[ntIdx].numFollow) != 1) {
+                                                    ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                                    ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[followNt].first[m][g];
+                                                    ffSet[ntIdx].numFollow++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (grammar.rules[followNt].hasEpsilon != 1)
+                                        break;
+                                }
+                                idx++;
+                            }
+                            if (idx == grammar.rules[ruleIdx].alternatives[altIdx].count) {
+                                if (ruleIdx != ntIdx) {
+                                    if (ffSet[ruleIdx].numFollow == 0)
+                                        computeIndividualFollow(grammar, ffSet, ruleIdx, -1);
+                                    for (int f = 0; f < ffSet[ruleIdx].numFollow; f++) {
+                                        if (isInArr(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
+                                            ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
+                                            ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[ruleIdx].follow[f];
+                                            ffSet[ntIdx].numFollow++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

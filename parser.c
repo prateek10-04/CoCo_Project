@@ -244,7 +244,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
                                         ffSet[ntIdx].numFollow++;
                                     }
                                     else {
-                                        if (isInArr(ffSet[ntIdx].follow, ffSet[nextNt].first[m][g], ffSet[ntIdx].numFollow) != 1) {
+                                        if (isInArray(ffSet[ntIdx].follow, ffSet[nextNt].first[m][g], ffSet[ntIdx].numFollow) != 1) {
                                             ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
                                             ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[nextNt].first[m][g];
                                             ffSet[ntIdx].numFollow++;
@@ -260,7 +260,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
                             while (idx < grammar.rules[ruleIdx].alternatives[altIdx].count) {
                                 int followNt = grammar.rules[ruleIdx].alternatives[altIdx].symbols[idx].value;
                                 if (grammar.rules[ruleIdx].alternatives[altIdx].symbols[idx].symbolType == 1) {
-                                    if (isInArr(ffSet[ntIdx].follow, followNt, ffSet[ntIdx].numFollow) != 1) {
+                                    if (isInArray(ffSet[ntIdx].follow, followNt, ffSet[ntIdx].numFollow) != 1) {
                                         ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
                                         ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = followNt;
                                         ffSet[ntIdx].numFollow++;
@@ -291,7 +291,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
                                     if (ffSet[ruleIdx].numFollow == 0)
                                         computeIndividualFollow(grammar, ffSet, ruleIdx, -1);
                                     for (int f = 0; f < ffSet[ruleIdx].numFollow; f++) {
-                                        if (isInArr(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
+                                        if (isInArray(ffSet[ntIdx].follow, ffSet[ruleIdx].follow[f], ffSet[ntIdx].numFollow) != 1) {
                                             ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
                                             ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = ffSet[ruleIdx].follow[f];
                                             ffSet[ntIdx].numFollow++;

@@ -223,7 +223,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
                             ffSet[ntIdx].numFollow++;
                         }
                         else {
-                            if (isInArr(ffSet[ntIdx].follow, grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value, ffSet[ntIdx].numFollow) != 1) {
+                            if (isInArray(ffSet[ntIdx].follow, grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value, ffSet[ntIdx].numFollow) != 1) {
                                 ffSet[ntIdx].follow = (int*)realloc(ffSet[ntIdx].follow, sizeof(int) * (ffSet[ntIdx].numFollow + 1));
                                 ffSet[ntIdx].follow[ffSet[ntIdx].numFollow] = grammar.rules[ruleIdx].alternatives[altIdx].symbols[symIdx + 1].value;
                                 ffSet[ntIdx].numFollow++;

@@ -119,3 +119,70 @@ Grammar readGrammar(char* filename) {
     fclose(filePtr);
     return grammarObj;
 }
+
+void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int ntIndex) {
+    int altCount = grammar.rules[ntIndex].numAlternatives;
+    for (int altIndex = 0; altIndex < altCount; altIndex++) {
+        if (grammar.rules[ntIndex].alternatives[altIndex].symbols[0].symbolType == 1) {
+            if (firstFollow[ntIndex].numFirst[altIndex] == 0)
+                firstFollow[ntIndex].first[altIndex] = (int*)malloc(sizeof(int));
+            else
+                firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
+            firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = grammar.rules[ntIndex].alternatives[altIndex].symbols[0].value;
+            firstFollow[ntIndex].numFirst[altIndex]++;
+        }
+    }
+    for (int altIndex = 0; altIndex < altCount; altIndex++) {
+        if (grammar.rules[ntIndex].alternatives[altIndex].symbols[0].symbolType == 0) {
+            int subNtIndex = grammar.rules[ntIndex].alternatives[altIndex].symbols[0].value;
+            if (firstFollow[subNtIndex].numFirst[0] == 0)
+                computeIndividualFirst(grammar, firstFollow, subNtIndex);
+            for (int altSub = 0; altSub < grammar.rules[subNtIndex].numAlternatives; altSub++) {
+                for (int firstElemIndex = 0; firstElemIndex < firstFollow[subNtIndex].numFirst[altSub]; firstElemIndex++) {
+                    if (firstFollow[subNtIndex].first[altSub][firstElemIndex] != 0) {
+                        if (isInArr(firstFollow[ntIndex].first[altIndex], firstFollow[subNtIndex].first[altSub][firstElemIndex], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                            firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
+                            firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = firstFollow[subNtIndex].first[altSub][firstElemIndex];
+                            firstFollow[ntIndex].numFirst[altIndex]++;
+                        }
+                    }
+                }
+            }
+            if (grammar.rules[subNtIndex].hasEpsilon == 1) {
+                int symIndex = 0;
+                while (symIndex < grammar.rules[ntIndex].alternatives[altIndex].count) {
+                    int nextSymbolIndex = grammar.rules[ntIndex].alternatives[altIndex].symbols[symIndex].value;
+                    if (nextSymbolIndex == ntIndex) {
+                        symIndex++;
+                        continue;
+                    }
+                    if (grammar.rules[ntIndex].alternatives[altIndex].symbols[symIndex].symbolType == 1) {
+                        if (isInArr(firstFollow[ntIndex].first[altIndex], nextSymbolIndex, firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                            firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
+                            firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = nextSymbolIndex;
+                            firstFollow[ntIndex].numFirst[altIndex]++;
+                        }
+                        break;
+                    } else {
+                        if (firstFollow[nextSymbolIndex].numFirst[0] == 0)
+                            computeIndividualFirst(grammar, firstFollow, nextSymbolIndex);
+                        for (int altSub2 = 0; altSub2 < grammar.rules[nextSymbolIndex].numAlternatives; altSub2++) {
+                            for (int firstElemIndex2 = 0; firstElemIndex2 < firstFollow[nextSymbolIndex].numFirst[altSub2]; firstElemIndex2++) {
+                                if (firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2] != 0) {
+                                    if (isInArr(firstFollow[ntIndex].first[altIndex], firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                                        firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
+                                        firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = firstFollow[nextSymbolIndex].first[altSub2][firstElemIndex2];
+                                        firstFollow[ntIndex].numFirst[altIndex]++;
+                                    }
+                                }
+                            }
+                        }
+                        if (grammar.rules[nextSymbolIndex].hasEpsilon != 1)
+                            break;
+                    }
+                    symIndex++;
+                }
+            }
+        }
+    }
+}

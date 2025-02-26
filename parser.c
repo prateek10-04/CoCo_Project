@@ -306,3 +306,23 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
         }
     }
 }
+
+FirstFollowSet* computeFirstFollowSets(Grammar grammar) {
+    FirstFollowSet* sets = (FirstFollowSet*)malloc(sizeof(FirstFollowSet) * grammar.numNonTerminals);
+    for (int i = 0; i < grammar.numNonTerminals; i++) {
+        int altCount = grammar.rules[i].numAlternatives;
+        sets[i].numFirst = (int*)malloc(sizeof(int) * altCount);
+        for (int j = 0; j < altCount; j++) {
+            sets[i].numFirst[j] = 0;
+        }
+        sets[i].first = (int**)malloc(sizeof(int*) * altCount);
+        sets[i].numFollow = 0;
+    }
+    for (int i = grammar.numNonTerminals - 1; i >= 0; i--) {
+        if (sets[i].numFirst[0] == 0)
+            computeIndividualFirst(grammar, sets, i);
+        if (sets[i].numFollow == 0)
+            computeIndividualFollow(grammar, sets, i, -1);
+    }
+    return sets;
+}

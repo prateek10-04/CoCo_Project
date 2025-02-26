@@ -140,7 +140,7 @@ void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int nt
             for (int altSub = 0; altSub < grammar.rules[subNtIndex].numAlternatives; altSub++) {
                 for (int firstElemIndex = 0; firstElemIndex < firstFollow[subNtIndex].numFirst[altSub]; firstElemIndex++) {
                     if (firstFollow[subNtIndex].first[altSub][firstElemIndex] != 0) {
-                        if (isInArr(firstFollow[ntIndex].first[altIndex], firstFollow[subNtIndex].first[altSub][firstElemIndex], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                        if (isInArray(firstFollow[ntIndex].first[altIndex], firstFollow[subNtIndex].first[altSub][firstElemIndex], firstFollow[ntIndex].numFirst[altIndex]) != 1) {
                             firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
                             firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = firstFollow[subNtIndex].first[altSub][firstElemIndex];
                             firstFollow[ntIndex].numFirst[altIndex]++;
@@ -157,7 +157,7 @@ void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int nt
                         continue;
                     }
                     if (grammar.rules[ntIndex].alternatives[altIndex].symbols[symIndex].symbolType == 1) {
-                        if (isInArr(firstFollow[ntIndex].first[altIndex], nextSymbolIndex, firstFollow[ntIndex].numFirst[altIndex]) != 1) {
+                        if (isInArray(firstFollow[ntIndex].first[altIndex], nextSymbolIndex, firstFollow[ntIndex].numFirst[altIndex]) != 1) {
                             firstFollow[ntIndex].first[altIndex] = (int*)realloc(firstFollow[ntIndex].first[altIndex], sizeof(int) * (firstFollow[ntIndex].numFirst[altIndex] + 1));
                             firstFollow[ntIndex].first[altIndex][firstFollow[ntIndex].numFirst[altIndex]] = nextSymbolIndex;
                             firstFollow[ntIndex].numFirst[altIndex]++;

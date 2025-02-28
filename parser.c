@@ -331,9 +331,9 @@ void displayParseTable(Grammar grammar, ParseTable* table) {
     int tot = 0;
     for (int i = 0; i < grammar.numNonTerminals; i++) {
         for (int j = 0; j < grammar.numTerminals; j++) {
-            if (table->cells[i][j].error == 0) {
+            if (table->entries[i][j].isError == 0) {
                 tot++;
-                printRule(grammar, table->cells[i][j].ruleInd, table->cells[i][j].rhsInd);
+                printRule(grammar, table->entries[i][j].ruleIndex, table->entries[i][j].alternativeIndex);
             }
         }
     }
@@ -341,15 +341,15 @@ void displayParseTable(Grammar grammar, ParseTable* table) {
 
 ParseTable* initializeParseTable(int numNonTerminals, int numTerminals) {
     ParseTable* table = (ParseTable*)malloc(sizeof(ParseTable));
-    table->cells = (ParseTableCell**)malloc(sizeof(ParseTableCell*) * numNonTerminals);
+    table->entries = (ParseTableEntry**)malloc(sizeof(ParseTableEntry*) * numNonTerminals);
     for (int i = 0; i < numNonTerminals; i++) {
-        table->cells[i] = (ParseTableCell*)malloc(sizeof(ParseTableCell) * numTerminals);
+        table->entries[i] = (ParseTableEntry*)malloc(sizeof(ParseTableEntry) * numTerminals);
     }
     for (int i = 0; i < numNonTerminals; i++) {
         for (int j = 0; j < numTerminals; j++) {
-            table->cells[i][j].error = 1;
-            table->cells[i][j].ruleInd = -1;
-            table->cells[i][j].rhsInd = -1;
+            table->entries[i][j].isError = 1;
+            table->entries[i][j].ruleIndex = -1;
+            table->entries[i][j].alternativeIndex = -1;
         }
     }
     return table;
@@ -357,31 +357,31 @@ ParseTable* initializeParseTable(int numNonTerminals, int numTerminals) {
 
 void createParseTable(Grammar grammar, FirstFollowSet* firstFollow, ParseTable* table) {
     int index;
-    for (int i = 0; i < grammar.totalRules; i++) {
+    for (int i = 0; i < grammar.numNonTerminals; i++) {
         for (int j = 0; j < grammar.rules[i].numAlternatives; j++) {
             for (int terminal_num = 0; terminal_num < firstFollow[i].numFirst[j]; terminal_num++) {
                 index = firstFollow[i].first[j][terminal_num];
-                if (index != 0) {   
-                    table->cells[i][index].error = 0;
-                    table->cells[i][index].ruleInd = i;
-                    table->cells[i][index].rhsInd = j;
+                if (index != 0) {
+                    table->entries[i][index].isError = 0;
+                    table->entries[i][index].ruleIndex = i;
+                    table->entries[i][index].alternativeIndex = j;
                 } else {
                     for (int follow_terminal_num = 0; follow_terminal_num < firstFollow[i].numFollow; follow_terminal_num++) {
-                        index = firstFollow[i].follow[follow_terminal_num]; 
-                        table->cells[i][index].error = 0;
-                        table->cells[i][index].ruleInd = i;
-                        table->cells[i][index].rhsInd = j;
+                        index = firstFollow[i].follow[follow_terminal_num];
+                        table->entries[i][index].isError = 0;
+                        table->entries[i][index].ruleIndex = i;
+                        table->entries[i][index].alternativeIndex = j;
                     }
                 }
             }
         }
     }
-    for (int i = 0; i < grammar.totalRules; i++) {
+    for (int i = 0; i < grammar.numNonTerminals; i++) {
         for (int j = 0; j < grammar.rules[i].numAlternatives; j++) {
             for (int follow_terminal_num = 0; follow_terminal_num < firstFollow[i].numFollow; follow_terminal_num++) {
-                index = firstFollow[i].follow[follow_terminal_num]; 
-                if (table->cells[i][index].error == 1) {   
-                    table->cells[i][index].error = 2;
+                index = firstFollow[i].follow[follow_terminal_num];
+                if (table->entries[i][index].isError == 1) {
+                    table->entries[i][index].isError = 2;
                 }
             }
         }

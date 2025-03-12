@@ -1,14 +1,12 @@
 /*
-ID  2019A7PS0064P					Name Siddharth Sharma
-ID  2019A7PS0062P					Name Atharva Chandak
-ID  2019A7PS0133P					Name Archit Bhatnagar 
-ID  2019A7PS0554P					Name Suchismita Tripathy
-ID  2019A7PS1139P 					Name Srujan Deolasee
+ID  2022A7PS0144P					Name Prateek Parwani
+ID  2022A7PS0183P					Name Sarat Srinadhu
+ID  2022A7PS1181P					Name Narasimha Naidu  
+ID  2022A7PS1178P 					Name Sanjay Jampani
 */
 
 #include "lookuptable.h"
 #include "lookuptableDef.h"
-// #include "lexerDef.h"
 int maxLen(int a){
     int count =0;
     while(a>0){
@@ -61,22 +59,7 @@ int search(char * lexeme){
     }
     return -1;
 }
-// int insert(char *lexeme, token_name tkn){
-//     int i = 0;
-//     int j;
-//     while(i<HASH_SIZE){
-//         j = hash(lexeme, i);
-//         if(!lookup_table[j].present){
-//             for(int i=0;i<strlen(lexeme);i++){
-//                 lookup_table[j].lexeme[i]=*(lexeme+i);
-//             }
-//             lookup_table[j].present = true;
-//             lookup_table[j].tkn=tkn;
-//             return j;
-//         }
-//         i++;
-//     }
-// }
+
 int insert(char *lexeme, token_name tkn) {
     int i = 0;
     int j;
@@ -101,20 +84,14 @@ void initialize(){
     FILE *fp = fopen("keywords_lexemes.txt","r");
     char str[20]="";
     int index;
-    // printf("start\n");
     for(int i=0;i<HASH_SIZE;i++){
         lookup_table[i].present=false;
         lookup_table[i].lexeme=(char *)malloc(sizeof(char)*MAX_LEXEME);
     }
     while(!feof(fp)){
         fscanf(fp,"%d %20[^,^\n],",&index,str);
-        // printf("%s\n",str);
         int j = search(str);
         if(j==-1){
-            // printf("lexeme: %s enum: %d ",str,mapIndexToEnum[index]);   
-            // printf("hashvalue: %d\n",insert(str, mapIndexToEnum[index]));  // index for the lexeme
-
-
             insert(str,mapIndexToEnum[index]);
         }
         fgetc(fp);
@@ -122,10 +99,3 @@ void initialize(){
     }
     fclose(fp);
 }
-// int main(){
-//     initialize();
-//     // char * lex="Int";
-//     // char *lex1="Real";
-//     // printf("%d %d\n",hash(lex,0),hash(lex1,0));
-//     return 0;
-// }

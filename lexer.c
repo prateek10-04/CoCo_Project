@@ -1,9 +1,8 @@
 /*
-ID  2019A7PS0064P					Name Siddharth Sharma
-ID  2019A7PS0062P					Name Atharva Chandak
-ID  2019A7PS0133P					Name Archit Bhatnagar 
-ID  2019A7PS0554P					Name Suchismita Tripathy
-ID  2019A7PS1139P 					Name Srujan Deolasee
+ID  2022A7PS0183P					Name Sarat Srinadhu
+ID  2022A7PS0144P					Name Prateek Parwani
+ID  2022A7PS1181P					Name Narasimha Naidu  
+ID  2022A7PS1178P 					Name Sanjay Jampani
 */
 
 #include "lexer.h"
@@ -27,12 +26,9 @@ int char_match(char a, char b){
 */
 token_name actualToken(token_name expected, char *lexeme){
     int j = search(lexeme);
-    // printf("%s\n",lexeme);
-    // printf("%d\n",j);
     if(j==-1)return expected;
    
     else{
-        // printf("%s %s\n",lookup_table[j].lexeme,lexeme);
         return lookup_table[j].tkn;
     }
 } 
@@ -49,52 +45,13 @@ int range_match(char a, char start, char end) {
     The way forward, lexemeBegin, and the strings are returned depends on whether the last character of twin_buffer->lexeme is useful or not
     In all of the cases accept(false,B) is preceded by reset(1,B)
 */
-// char* accept(bool isLastUseful,twinBuffer *B){
-//     char *str=NULL;
-//     int l;
-//     if(isLastUseful){
-//         B->lexemeBegin=B->forward+1;    // the begin pointer is updated for future use
-//         B->lexeme[B->pos]='\0';         // '\0' is appended for string operations
-//         str =(char *)malloc(sizeof(char)*(B->pos+1));
-//         l = B->pos+1;
-//         // str=B->lexeme;                            // the value to be returned is stored
-//     }
-//     else{
-//         if(B->pos!=0){
-//             B->lexeme[B->pos-1]='\0';
-//             str =(char *)malloc(sizeof(char)*B->pos);
-//             l = B->pos;
-//             // str=twin_buffer->lexeme;
-//             // printf("%s accepted \n",str);
-//         }
-//     }
-//     // printf("%s \n",str);
-
-//     // The below way of populating strings works, i.e. the values are not erased post memset.
-
-//     for(int i=0;i<l;i++){
-//         str[i] = *(B->lexeme + i);    
-//     }
-//     dfa_state=0;                                            // dfa_state is initialized to zero for future use
-//     // printf("%s \n",str);    
-//     B->lexemeBegin=B->forward+1;
-//     // printf("%s\n",str) ;
-//     // memset(B->lexeme,0,MAX_LEXEME);  // empty contents of lexeme string once it is used
-//     free(B->lexeme);
-//     B->lexeme = (char *)malloc(sizeof(char *)*MAX_LEXEME);
-//     // printf("%s\n",ret);
-//     B->pos=0;                                         // re-initialize the position to which a new character is added in twin_buffer->lexeme
-//     return str;
-// }
 
 char* accept(bool isLastUseful,twinBuffer *B) {
     char *str = NULL;
     int l = 0;
     
     if (isLastUseful) {
-        // Terminate at current position.
         B->lexeme[B->pos] = '\0';
-        // Allocate enough space for the lexeme (including terminator).
         l = B->pos + 1;
         str = (char *)malloc(sizeof(char) * l);
         for (int i = 0; i < l; i++) {
@@ -102,7 +59,6 @@ char* accept(bool isLastUseful,twinBuffer *B) {
         }
     } else {
         if (B->pos != 0) {
-            // Remove the last character and terminate.
             B->lexeme[B->pos - 1] = '\0';
             l = B->pos;
             str = (char *)malloc(sizeof(char) * l);
@@ -112,13 +68,10 @@ char* accept(bool isLastUseful,twinBuffer *B) {
         }
     }
     
-    dfa_state = 0; // Reset DFA state for future use
+    dfa_state = 0; 
     
-    // Update lexemeBegin once for the next token.
     B->lexemeBegin = B->forward + 1;
     
-    // Instead of freeing and reallocating the lexeme buffer,
-    // clear its contents and reset pos.
     memset(B->lexeme, 0, MAX_LEXEME);
     B->pos = 0;
     
@@ -130,33 +83,6 @@ char* accept(bool isLastUseful,twinBuffer *B) {
     This function is used to return erroneous lexemes. reset(1,B) is called before reject(B) to reset t,Bhe forward 
     pointer for tokenizing other tokens.
 */
-
-// char * reject(twinBuffer *B){                                                
-//     char * str=NULL;
-//     int l;
-//     // printf("%d \n",strlen(twin_buffer->lexeme));    
-//     if(B->pos!=0){
-//         B->lexeme[B->pos-1]='\0';   // append '\0' for string operations
-//         str = (char *)malloc(sizeof(char)*B->pos);
-//     }
-//     l = B->pos;
-//     // below way of populating strings is unaffected by memset
-//     // char *ret =(char *)malloc(sizeof(char)*strlen(str));
-//     for(int i=0;i<strlen(B->lexeme);i++){
-//         str[i] = *(B->lexeme + i);    
-//     }
-    
-//     dfa_state=0;
-//     B->lexemeBegin=B->forward+1;
-    
-    
-//     // memset(B->lexeme,0,MAX_LEXEME);  // empty contents of lexeme string once it is used
-//     free(B->lexeme);
-//     B->lexeme = (char *)malloc(sizeof(char *)*MAX_LEXEME);
-//     B->pos=0;
-
-//     return str;
-// }
 
 char* reject(twinBuffer *B) {
     char *str = NULL;
@@ -174,7 +100,6 @@ char* reject(twinBuffer *B) {
     dfa_state = 0;
     B->lexemeBegin = B->forward + 1;
     
-    // Clear the lexeme buffer for reuse.
     memset(B->lexeme, 0, MAX_LEXEME);
     B->pos = 0;
     
@@ -202,7 +127,6 @@ void populateToken(tokenInfo *TOK, token_name t, char * lexeme, int lineNo){
         for(int i=0;i<strlen(lexeme);i++)
             TOK->value.str[i] = *(lexeme +i);
         TOK->value.str[strlen(lexeme)]='\0';
-        // printf("token length %ld ",strlen(lexeme));
     }
 
 }   
@@ -211,24 +135,7 @@ void populateToken(tokenInfo *TOK, token_name t, char * lexeme, int lineNo){
     This function initializes the twin buffer. The EOF characters are added at index BUFFER_SIZE - 1 and 2*BUFFER_SIZE - 1, to work as sentinels 
     for performing twin buffer operations
 */
-// void initializeTwinBuffer(){
-//     twin_buffer = (twinBuffer *)malloc(sizeof(twinBuffer));
-//     twin_buffer->buffer=(char *)malloc(sizeof(char)*BUFFER_SIZE*2);
-//     twin_buffer->lexeme=(char *)malloc(sizeof(char)*MAX_LEXEME);
-//     memset(twin_buffer->buffer,0,BUFFER_SIZE*2);
-//     // twin_buffer->lexeme = "sss";
-//     // printf("%s \n",twin_buffer->lexeme);
-//     twin_buffer->lexemeBegin=0;
-//     twin_buffer->forward=-1;
-//     // initialize ends with sentinels
-//     (twin_buffer->buffer)[BUFFER_SIZE-1]=EOF;
-//     (twin_buffer->buffer)[2*BUFFER_SIZE-1]=EOF;
-//     dfa_state=0;
-//     twin_buffer->pos=0;
-//     lineNo = 1;
-//     // printf("done initTwinBuff\n");
 
-// }
 twinBuffer *initializeTwinBuffer(){
     twinBuffer *B = (twinBuffer *)malloc(sizeof(twinBuffer));
     B->buffer = (char *)malloc(sizeof(char) * BUFFER_SIZE * 2);
@@ -238,7 +145,6 @@ twinBuffer *initializeTwinBuffer(){
     B->forward = -1;
     B->pos = 0;
     lineNo = 1;
-    // Initialize sentinels in the buffer
     B->buffer[BUFFER_SIZE - 1] = EOF;
     B->buffer[2 * BUFFER_SIZE - 1] = EOF;
     return B;
@@ -246,21 +152,13 @@ twinBuffer *initializeTwinBuffer(){
 /*
     This funcion frees the memory allocated to the twin buffer, and sets it to NULL.
 */
-// void clearTwinBuffer(){
-//     free(twin_buffer->lexeme);
-//     free(twin_buffer->buffer);
-//     free(twin_buffer);
-//     twin_buffer = NULL;
-//     initializeTwinBuffer();
-//     // printf("== twin buffer -- %d -- \n", twin_buffer==NULL);
-// }
+
 void clearTwinBuffer(twinBuffer *B_ref){
     if(B_ref) {
         free(B_ref->lexeme);
         free(B_ref->buffer);
         free(B_ref);
         B_ref = NULL;
-        // *B_ref = initializeTwinBuffer();
     }
 }
 /*
@@ -269,28 +167,6 @@ void clearTwinBuffer(twinBuffer *B_ref){
     Also updates the position of pos to which new character is added.
     Returns the character which is added to twin_buffer->lexeme
 */
-// char next_char(FILE *fp, bool isComment, bool isLengthExceeded){
-//     twin_buffer->forward++;
-//     // printf("%s lexeme\n",twin_buffer->lexeme);
-//     if(twin_buffer->buffer[twin_buffer->forward]==EOF){
-//         if(twin_buffer->forward==BUFFER_SIZE-1){
-//             fp = getStream(fp,1);
-//             twin_buffer->forward=BUFFER_SIZE;
-//         }
-//         else if(twin_buffer->forward==2*BUFFER_SIZE-1){
-//             fp=getStream(fp,0);
-//             twin_buffer->forward=0;
-//         }
-//         else{
-//             // printf("End of input\n");
-//         }
-//     }
-//     if(!isComment && !isLengthExceeded){
-//         twin_buffer->lexeme[twin_buffer->pos]=twin_buffer->buffer[twin_buffer->forward]; // add character to twin_buffer->lexeme
-//         twin_buffer->pos++;
-//     }
-//     return twin_buffer->buffer[twin_buffer->forward];
-// }
 
 char next_char(twinBuffer *B, FILE *fp, bool isComment, bool isLengthExceeded){
     B->forward++;
@@ -303,10 +179,9 @@ char next_char(twinBuffer *B, FILE *fp, bool isComment, bool isLengthExceeded){
             fp = getStream(B, fp, 0);
             B->forward = 0;
         }
-        // If neither case, we reached the end of input.
     }
     if(!isComment && !isLengthExceeded){
-        B->lexeme[B->pos] = B->buffer[B->forward]; // add character to lexeme
+        B->lexeme[B->pos] = B->buffer[B->forward];
         B->pos++;
     }
     return B->buffer[B->forward];
@@ -316,23 +191,6 @@ char next_char(twinBuffer *B, FILE *fp, bool isComment, bool isLengthExceeded){
 /*  bufferNumer=0 implies first buffer to be filled
     bufferNumber=1 implies second buffer to be filled
 */
-// FILE *getStream(FILE *fp, int bufferNumber){
-//     if(twin_buffer==NULL){
-//         // printf("working\n");
-//         int x;
-//         initializeTwinBuffer();
-//         if(!bufferNumber)x = fread(&twin_buffer->buffer[0],1,BUFFER_SIZE-1,fp);
-//         // printf("done read\n");
-//         if(x!=BUFFER_SIZE-1)twin_buffer->buffer[x]=EOF;
-//     }
-//     else{
-//         int x;
-//         if(!bufferNumber)x = fread(&twin_buffer->buffer[0],1,BUFFER_SIZE-1,fp);
-//         else x = fread(&twin_buffer->buffer[BUFFER_SIZE],1,BUFFER_SIZE-1,fp);
-//         if(x!=BUFFER_SIZE-1)twin_buffer->buffer[bufferNumber*BUFFER_SIZE+x] = EOF;
-//     }
-//     return fp;
-// }
 
 FILE *getStream(twinBuffer *B, FILE *fp, int bufferNumber){
     int x;
@@ -363,16 +221,13 @@ void reset(int amt,twinBuffer *B) {
 */
 tokenInfo getNextToken(twinBuffer *B, FILE *fp){
     char c;
-    lexError = 0; // initially there are no errors, I have just stored it here in case ERROR token needs to be differentiated further
-    tokenInfo *TOK = (tokenInfo *)malloc(sizeof(tokenInfo));    // Allocate memory to the token
-    // printf("Hello3\n");
+    lexError = 0; 
+    tokenInfo *TOK = (tokenInfo *)malloc(sizeof(tokenInfo));
 
     while(1){
-        // printf("%d\n",dfa_state);
         switch(dfa_state){
             case 0: {
                 c = next_char(B,fp,false,false);
-               // printf("%c\n",c);
 
                 if(char_match(c,'<')){
                     dfa_state = 1;
@@ -455,36 +310,23 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 39;
                 }
                 else if(char_match(c,'\n')|| char_match(c,' ') || char_match(c,'\f') || char_match(c,'\r') || char_match(c,'\t') || char_match(c,'\v')) {
-                    // Advance lexemeBegin as the current lexeme should not include this character
-                    // lexemeBegin++;
-                    // printf("whitespace \n");
                     dfa_state = 7;
                 }
 
 
              
-                else if(char_match(c,EOF) || c==0) {    // Input stream ends
-                    // Indicates end of input
-                    // printf("end of input\n");
+                else if(char_match(c,EOF) || c==0) {  
                     char *lex = accept(true,B);
                     populateToken(TOK,TK_EOF,lex,lineNo);
                     free(lex);
                     return *TOK;
                 }
                 else if(range_match(c,'A','Z')){    
-                    /*
-                        This operation is only performed when the first character of twin_buffer->lexeme is uppercase.
-                        Since no other token is possible it only checks if the token is a keyword in state 59
-                    */
-                    dfa_state=59;   // check if it is a token
+                    dfa_state=59;
 
                 }
                 else {
-                    // Other new characters are reported as error
                     printf("Line No: %d - ERROR: Unknown symbol <%c>\n" ,lineNo,c);
-                    // Throw lexical error!
-                    // printf("y\n");
-                    // This is the only case where accept(true,B) is used to report error since the lexeme only has one useful character
                     char *str = accept(true,B);
                     populateToken(TOK,ERROR,str,lineNo);
                     lexError = 1;    
@@ -496,7 +338,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
 
             
             case 1: {
-                // currently twin_buffer->lexeme has "<"
                 c = next_char(B,fp,false,false);
                 if(c == '-') {
                     dfa_state = 2;
@@ -515,7 +356,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 3;
                 }
                 else {
-                    // Throw lexical error.
                     reset(1,B);
                     char* pattern = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,pattern);
@@ -530,7 +370,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 4;
                 }
                 else {
-                    // Throw lexical error
                     reset(1,B);
                     char* pattern = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,pattern);
@@ -556,14 +395,12 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
             case 6: {
                 char *str = accept(true,B);
                 populateToken(TOK,TK_LE,str,lineNo);
-                // accept(false,B);
                 return *TOK;
                 break;
             }
 
             case 7: {
                 c = next_char(B,fp,false,false);
-                // printf("%c \n",c);
                 if(c == '\n'||c == '\r'||c == '\t'||c == '\f'||c == '\v') {
                     dfa_state = 7;
                     if(char_match(c,'\n'))lineNo++;
@@ -573,10 +410,7 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
             }
             case 8: {
                 reset(1,B); 
-                // printf("state 8 \n"); 
-                // twin_buffer->lexemeBegin=twin_buffer->forward+1;
                 accept(false,B);
-                // dfa_state=0;
                 break;
             }
             case 9: {
@@ -632,7 +466,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 15;
                 }
                 else {
-                    // Throw Lexical error
                     reset(1,B);
                     char* pattern = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,pattern);
@@ -651,7 +484,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
             }
 
              case 16: {
-                //  printf("%d \n",dfa_state);
                 c = next_char(B,fp,false,false);
                 if(range_match(c,'2','7')) {
                     dfa_state = 17;
@@ -664,7 +496,7 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                 }
                 break;
             }
-            case 17: {  // TK_ID is the only possibility
+            case 17: {
                 c = next_char(B,fp,false,false);
                 while(range_match(c,'b','d')){
                     if(strlen(B->lexeme)<21)
@@ -697,7 +529,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
             case 19: {     
                 reset(1,B);
                 char * lex = accept(false,B);
-                // printf("State 19 %s\n",lex);
                 if(strlen(lex) < 2) {
                     printf("Line No %d: Error :Variable Identifier is smaller than the prescribed length of 2 characters\n" , lineNo);
                     lexError=3;
@@ -709,14 +540,13 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     populateToken(TOK,ERROR, lex, lineNo);
                 }
                 else {
-                    // printf(" %s %d\n",lex,actualToken(TK_ID,lex));
                     populateToken(TOK,actualToken(TK_ID, lex),lex,lineNo);
                 }
                 return *TOK;
                 break;
             }
         
-            case 20: {  // token for TK_FIELDID
+            case 20: { 
                 c = next_char(B,fp,false,false);
                 while(range_match(c,'a','z')){
                     if(strlen(B->lexeme)<21)
@@ -730,19 +560,7 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
             case 21: {
                 reset(1,B);
                 char* lex = accept(false,B);
-                // if(strlen(lex) < 2) {
-                //     printf("Line No %d: Error :Variable Identifier is smaller than the prescribed length of two characters\n" , lineNo);
-                //     lexError=3;
-                //     populateToken(TOK,ERROR,lex,lineNo);
-                // }
-                // else if(strlen(lex) > 20) {
-                //     printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters\n" ,lineNo);
-                //     lexError = 3;
-                //     populateToken(TOK,ERROR, lex, lineNo);
-                // }
-                // else {
                     populateToken(TOK,actualToken(TK_FIELDID, lex),lex,lineNo);
-                // }
                 dfa_state=0;
                 return *TOK;
                 break;
@@ -752,7 +570,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                 c = next_char(B,fp,false,false);
                 if(range_match(c,'a','z') || range_match(c,'A','Z')) {
                     dfa_state = 23;
-                    // printf("Hello5\n");
                 }
                 else {
                     reset(1,B);
@@ -814,7 +631,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 27;
                 }
                 else {
-                    // Throw lexical error
                     reset(1,B);
                     char* pattern = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,pattern);
@@ -839,27 +655,9 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                 break;
             }
             case 28: {
-                // if(strlen(B->lexeme)<=21){
                     reset(1,B);
                     char* lex = accept(false,B);
                     populateToken(TOK, TK_RUID, lex,lineNo);
-                // }
-                // else{
-                //     if(strlen(B->lexeme)<2){
-                //         reset(1,B);
-                //         char *lex = reject(B);
-                //         lexError = 3;
-                //         printf("Line No %d: Error :Record Identifier is smaller than the prescribed length of 2 characters\n" ,lineNo);
-                //         populateToken(TOK, ERROR, lex, lineNo);
-                //     }
-                //     else if(strlen(B->lexeme)>21){
-                //         reset(1,B);
-                //         char *lex = reject(B);
-                //         lexError = 3;
-                //         printf("Line No %d: Error :Record Identifier is smaller than the prescribed length of 2 characters\n" ,lineNo);
-                //         populateToken(TOK,ERROR,lex,lineNo);
-                //     }
-                // }
                 return *TOK;
                 dfa_state = 0;
                 break;
@@ -919,7 +717,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 34;
                 }
                 else {
-                    // Throw lexical
                     reset(1,B);
                     char* lex = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,lex);
@@ -1028,7 +825,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 41;
                 }
                 else {
-                    // Throw lexical error
                     reset(1,B);
                     char* lex = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,lex);
@@ -1062,7 +858,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 44;
                 }
                 else {
-                    // Throw lexical error
                     reset(1,B);
                     char* lex = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,lex);
@@ -1080,7 +875,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 45;
                 }
                 else {
-                    // Throw lexical
                     reset(1,B);
                     char* lex = reject(B);
                     printf("Line No: %d - ERROR: Unknown pattern <%s>\n" ,lineNo,lex);
@@ -1178,24 +972,14 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                 break;
             }     
           
-           /*case 58: {
-                c = next_char(B,fp,true,false);
-                while(c != '\n') {
-                    c = next_char(B,fp,true,false);
-                }
-                reset(1,B);
-                B->lexemeBegin = B->forward;
-                dfa_state = 0;
-                break;
-            }*/
             case 58: {
-                int commentLine = lineNo;  // store the starting line of the comment
+                int commentLine = lineNo;  
                 c = next_char(B, fp, true, false);
                 while(c != '\n' && c != EOF) {
                     c = next_char(B, fp, true, false);
                 }
                 if(c == '\n') {
-                    lineNo++;  // update line number when newline is encountered
+                    lineNo++; 
                 }
                 char *str = accept(true, B);
                 populateToken(TOK, TK_COMMENT, str, commentLine);
@@ -1238,33 +1022,26 @@ void removeComments(char *testcaseFile, char *cleanFile) {
     
     char line[1024];
     while (fgets(line, sizeof(line), test_fptr)) {
-        // Remove the newline character if present.
         line[strcspn(line, "\n")] = '\0';
         
-        // Skip leading whitespace for checking the first non-whitespace character.
         char *ptr = line;
         while (*ptr && isspace((unsigned char)*ptr))
             ptr++;
         
-        // If the first non-whitespace character is '%', skip this line entirely.
         if (*ptr == '%')
             continue;
         
-        // Look for an inline comment marker '%'
         char *commentPos = strchr(line, '%');
         if (commentPos) {
-            // Terminate the string at the comment marker.
             *commentPos = '\0';
         }
         
-        // Trim trailing whitespace from the line.
         int len = strlen(line);
         while (len > 0 && isspace((unsigned char)line[len - 1])) {
             line[len - 1] = '\0';
             len--;
         }
         
-        // If the line is not empty after trimming, write it to the output file.
         if (strlen(line) > 0)
             fprintf(fptr, "%s\n", line);
     }
@@ -1272,78 +1049,16 @@ void removeComments(char *testcaseFile, char *cleanFile) {
     fclose(fptr);
     fclose(test_fptr);
 }
-// void removeComments(char *testcaseFile, char *cleanFile){
-//     FILE *test_fptr = fopen(testcaseFile, "r");
-
-//     FILE *fptr = fopen(cleanFile, "w");
-//     // printf("\nremoving comments, file opened\n");
-//     twinBuffer *B = initializeTwinBuffer();
-
-//     int is_comment = 0;
-//     char c = fgetc(test_fptr);
-//     while(c != EOF) {
-//         switch(is_comment) {
-//             case 0: {
-//                 if(c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v') {
-//                     // whitespace
-//                     fwrite(&c, sizeof(char), 1, fptr);
-//                     is_comment = 0;
-//                 }
-//                 if(c == '%') {
-//                     // comment
-//                     is_comment = 1;
-//                 }
-//                 else if(c == '\n') {
-//                     // new line
-//                     fwrite(&c, sizeof(char), 1, fptr);
-//                     is_comment = 0;
-//                 }
-//                 else {
-//                     fwrite(&c, sizeof(char), 1, fptr);
-//                     is_comment = 2;
-//                 }
-//                 break;
-//             }
-//             case 1: {
-//                 // end of comment
-//                 if(c == '\n') {
-//                     fwrite(&c, sizeof(char), 1, fptr);
-//                     is_comment = 0;
-//                 }
-//                 break;
-//             }
-//             case 2: {
-//                 fwrite(&c, sizeof(char), 1, fptr);
-//                 if(c == '\n')
-//                     is_comment = 0;
-//                 break;
-//             }
-//         }
-//         c = fgetc(test_fptr);
-//     }
-//     clearTwinBuffer(B);
-//     fclose(fptr);
-//     fclose(test_fptr);
-// }
 
 /*
     This function invokes the lexer and prints all the lexemes and the corresponding tokens (and errors if present).
 */
 void prettyPrint(char *testcaseFile){
-    // initialize();
-    // char *file = testcaseFile;
     FILE *f = fopen(testcaseFile,"r");
     printf("\n--- PRETTY PRINT LEXER ---\n");
-    // Initialize the twin buffer
     twinBuffer *B = initializeTwinBuffer();
-    // printf("Hello1\n");
-    // Read into the buffer: note that the new getStream takes twinBuffer pointer, file pointer, and buffer number
     f = getStream(B, f, 0);
-    // printf("Hello2\n");
-
-    // Get the first token using the updated getNextToken that accepts twinBuffer pointer
     tokenInfo t = getNextToken(B, f);
-    // printf("Hello3\n");
 
     while(t.tkn_name!=TK_EOF){
         if(t.tkn_name==TK_NUM)

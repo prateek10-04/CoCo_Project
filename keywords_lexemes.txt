@@ -1,0 +1,1 @@
+8 with, 9 parameters, 10 end, 11 while, 12 union, 13 endunion, 14 definetype, 15 as, 16 type, 17 _main, 18 global, 19 parameter, 20 list, 23 input, 24 output, 25 int, 26 real, 31 endwhile, 34 if, 35 then, 36 endif, 37 read, 38 write, 39 return, 44 call, 45 record, 46 endrecord, 47 else

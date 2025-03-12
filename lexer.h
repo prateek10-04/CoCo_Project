@@ -1,30 +1,31 @@
-// lexer.h
-#ifndef LEXER_H
-#define LEXER_H
+/*
+ID  2019A7PS0064P					Name Siddharth Sharma
+ID  2019A7PS0062P					Name Atharva Chandak
+ID  2019A7PS0133P					Name Archit Bhatnagar 
+ID  2019A7PS0554P					Name Suchismita Tripathy
+ID  2019A7PS1139P 					Name Srujan Deolasee
+*/
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#pragma once
+#include "lookuptable.h"
 #include "lexerDef.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-// Functions for token processing
-const char *getTokenTypeString(TokenType type);
-
-// Hash table functions
-void initializeHashTable(struct HashMap *table);
-void insertKeyword(struct HashMap *table, char *key, TokenType token);
-TokenType lookupKeyword(struct HashMap *table, char *key);
-int hashFunction(struct HashMap *table, char *key);
-
-// File buffer management
-FILE *loadStream(FILE *fp, int bufferSection);
-void monitorBufferBounds(void);
-TokenInfo retrieveNextToken(void);
-
-// Comment handling
-void stripComments(char *inputFile);
-long getFileByteSize(FILE *fp);
-void displayFileContents(FILE *fp);
-void printTokenStream(char *fileName);
-
-#endif // LEXER_H
+int dfa_state;
+token_name actualToken(token_name expected, char *lexeme);
+int range_match(char a, char start, char end);
+char* accept(bool isLastUseful,twinBuffer *B);
+char * reject(twinBuffer *B);
+void populateToken(tokenInfo *TOK, token_name t, char * lexeme, int lineNo);
+twinBuffer *initializeTwinBuffer();
+char next_char(twinBuffer *B, FILE *fp, bool isComment, bool isLengthExceeded);
+void reset(int amt,twinBuffer *B);
+int char_match(char a, char b);
+FILE *getStream(twinBuffer *B, FILE *fp, int bufferNumber);
+tokenInfo getNextToken(twinBuffer *B, FILE *fp);
+void removeComments(char *testcaseFile, char *cleanFile);
+void clearTwinBuffer(twinBuffer *B_ref);
+void removeComments(char *testcaseFile, char *cleanFile);
+void prettyPrint(char *testcaseFile); 

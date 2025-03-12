@@ -1,6 +1,6 @@
 #include "utils.h"
 
-int findIndex(char** array, int size, char* target) {
+int findIndex(char** array, int size,const char* target) {
     for (int i = 0; i < size; i++) {
         if (strcmp(target, array[i]) == 0) {
             return i;
@@ -25,7 +25,7 @@ int isInArray(int* array, int num, int size) {
 }
 
 void printRule(Grammar grammarObj, int ruleIndex, int alternativeIndex) {
-    printf("\n\nPrinting rule number: %d\n", grammarObj.rules[ruleIndex].ruleNumber);
+    printf("\nPrinting rule number: %d\n", grammarObj.rules[ruleIndex].ruleNumber);
     printf("LHS: %s\n", grammarObj.nonTerminals[grammarObj.rules[ruleIndex].leftHandSide]);
     printf("RHS: ");
     if (alternativeIndex == -1) {
@@ -39,7 +39,7 @@ void printRule(Grammar grammarObj, int ruleIndex, int alternativeIndex) {
             if (alt < grammarObj.rules[ruleIndex].numAlternatives - 1)
                 printf("| ");
         }
-        printf("\n\n\n");
+        printf("\n");
     } else {
         for (int sym = 0; sym < grammarObj.rules[ruleIndex].alternatives[alternativeIndex].count; sym++) {
             if (grammarObj.rules[ruleIndex].alternatives[alternativeIndex].symbols[sym].symbolType == 0)
@@ -47,7 +47,7 @@ void printRule(Grammar grammarObj, int ruleIndex, int alternativeIndex) {
             else
                 printf("%s ", grammarObj.terminals[grammarObj.rules[ruleIndex].alternatives[alternativeIndex].symbols[sym].value]);
         }
-        printf("\n\n\n");
+        printf("\n");
     }
 }
 
@@ -62,6 +62,6 @@ void prettyPrintGrammar(Grammar grammarObj) {
                        grammarObj.rules[i].alternatives[alt].symbols[sym].value);
             }
         }
-        printf("\n\n");
+        printf("\n");
     }
 }

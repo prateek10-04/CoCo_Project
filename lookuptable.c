@@ -28,10 +28,14 @@ int kmult(int a, int b){
     return a_high_b_high*binExpo(10,2*ten_power_n_by_2) + (kmult(a_high, b_low) + kmult(a_low, b_high))*ten_power_n_by_2+a_low_b_low;
 
 }
-int binExpo(int a, int b){
-    if(!b) return 1;
-    if(b%2) return a*binExpo(a,(b-1)/2);
-    if(!(b%2)) return binExpo(a,b/2);
+int binExpo(int a, int b) {
+    if (b == 0)
+        return 1;
+    int half = binExpo(a, b / 2);
+    if (b % 2 == 0)
+        return half * half;
+    else
+        return a * half * half;
 }
 
 int h1(char *lexeme){

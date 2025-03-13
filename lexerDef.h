@@ -1,14 +1,16 @@
 /*
-ID  2022A7PS0144P					Name Prateek Parwani
-ID  2022A7PS0183P					Name Sarat Srinadhu
-ID  2022A7PS1181P					Name Narasimha Naidu  
-ID  2022A7PS1178P 					Name Sanjay Jampani
+ID  2019A7PS0064P					Name Siddharth Sharma
+ID  2019A7PS0062P					Name Atharva Chandak
+ID  2019A7PS0133P					Name Archit Bhatnagar 
+ID  2019A7PS0554P					Name Suchismita Tripathy
+ID  2019A7PS1139P 					Name Srujan Deolasee
 */
 
 #ifndef LEXER_DEF
 #define LEXER_DEF
 #define BUFFER_SIZE 4096
 #define MAX_LEXEME 400
+// #include "lookuptable.h"
 #include<stdio.h>
 #include<stdlib.h>
 typedef struct twinBuffer twinBuffer;
@@ -23,7 +25,12 @@ struct twinBuffer{
     char *lexeme;
 };
 int lexError, lineNo;
-
+/*
+0- no error
+1- unknown symbol
+2- unknown pattern
+3- length exceeded  
+*/
 typedef enum token_name{
     // tokens list
     TK_ASSIGNOP,
@@ -105,3 +112,13 @@ typedef struct TOKEN{
 }tokenInfo;
 twinBuffer *twin_buffer;    // buffer the lexer
 #endif
+
+/*
+To Do:
+
+1. Hash Table/ Symbol Table
+2. getnextToken
+
+
+
+*/

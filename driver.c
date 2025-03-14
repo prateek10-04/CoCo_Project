@@ -16,20 +16,20 @@ int main(int argc, char *argv[]) {
     char *sourceFile = argv[1];
     char *parseTreeFile = argv[2];
 
-    // Read the grammar from file
+    
     printf("Reading grammar file...\n");
     Grammar grammar = readGrammar("grammar.txt");
     printf("Grammar file read successfully!\n");
 
-    // Initialize lexer and parser
+    
     initialize();
     printf("Lexer/parser modules initialized.\n");
 
-    // Compute FIRST and FOLLOW sets
+    
     FirstFollowSet *ffSet = computeFirstFollowSets(grammar);
     printf("Computed FIRST and FOLLOW sets.\n");
 
-    // Initialize and create parse table
+    
     ParseTable *parseTable = initializeParseTable(grammar.numNonTerminals, grammar.numTerminals);
     createParseTable(grammar, ffSet, parseTable);
     printf("Parse table created successfully.\n");
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a valid option.\n");
-            while (getchar() != '\n'); // Clear input buffer
+            while (getchar() != '\n'); 
             continue;
         }
 

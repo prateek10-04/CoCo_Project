@@ -71,7 +71,7 @@ int insert(char *lexeme, token_name tkn) {
             for (k = 0; k < strlen(lexeme); k++) {
                 lookup_table[j].lexeme[k] = lexeme[k];
             }
-            lookup_table[j].lexeme[k] = '\0';  // add null terminator
+            lookup_table[j].lexeme[k] = '\0';  
             lookup_table[j].present = true;
             lookup_table[j].tkn = tkn;
             return j;

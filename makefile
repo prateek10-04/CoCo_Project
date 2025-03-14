@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -std=c99 -g
 
 # Target executable name
-TARGET = stage1exe
+TARGET = finalexe
 
 # Object files
 OBJS = driver.o lexer.o parser.o lookuptable.o tree.o utils.o

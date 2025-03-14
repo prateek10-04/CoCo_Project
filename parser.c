@@ -1,3 +1,10 @@
+/*
+    ID  2022A7PS0144P					Name Prateek Parwani
+    ID  2022A7PS0183P					Name Sarat Srinadhu
+    ID  2022A7PS1178P					Name Sanjay Jampani 
+    ID  2022A7PS1181P					Name Narasimha Naidu
+*/
+
 #include "parser.h"
 #include <stdlib.h>
 #include <string.h>
@@ -388,16 +395,13 @@ void createParseTable(Grammar grammar, FirstFollowSet* firstFollow, ParseTable* 
     }
 }
 
-// Define a function to check if a token is in the sync set.
 int isSyncToken(tokenInfo token) {
-    // You can compare the token's type to your sync tokens.
-    // Adjust these based on your token enum values.
     if (token.tkn_name == TK_SEM ||
         token.tkn_name == TK_END ||
         token.tkn_name == TK_ENDIF ||
         token.tkn_name == TK_ELSE ||
-        token.tkn_name == TK_SQL ||  // Example for a closing curly bracket or parenthesis
-        token.tkn_name == TK_SQR)    // Example for a closing square bracket
+        token.tkn_name == TK_SQL ||  
+        token.tkn_name == TK_SQR)   
     {
         return 1;
     }
@@ -419,21 +423,16 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
     FILE *fp = fopen(sourceFile, "r");
     
     initialize();
-    // Create and initialize the twin buffer for the lexer.
     twinBuffer *B = initializeTwinBuffer();
-    // Fill the first buffer.
     fp = getStream(B, fp, 0);
     
-    // Use GrammarSymbol (defined in parserDef.h) for the stack.
     GrammarSymbol* stack = (GrammarSymbol*) malloc(sizeof(GrammarSymbol) * 2);
-    // Push $ (terminal): type = 1, value = grammar.numTerminals - 1
+
     stack[0].symbolType = 1; 
-    stack[0].value = grammar.numTerminals - 1; // '$'
-    // Push start symbol: type = 0, value = 0
+    stack[0].value = grammar.numTerminals - 1; 
     stack[1].symbolType = 0; 
-    stack[1].value = 0; // Start symbol 
+    stack[1].value = 0; 
     
-    // pointers holds treeN* corresponding to the symbols on the stack.
     treeN** pointers = (treeN**) malloc(sizeof(treeN) * 2); 
     pointers[0] = NULL; 
     node rootNode = createEl(-1, -1, 0, 0,  0); 
@@ -442,7 +441,7 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
 
     int stackLen = 2; 
     int stackPointer = 1; 
-    // Get the first token using the twinBuffer.
+   
     tokenInfo currToken = getNextToken(B, fp);
     while (currToken.tkn_name == TK_COMMENT) {
         currToken = getNextToken(B, fp);
@@ -537,19 +536,9 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
             *errorFlag = 1;
             break; 
         } 
-        // printf("Current token: %s, Stack top: %s, Stack pointer: %d\n");
-        // printf("Current token: %s, Stack top: %s, Stack pointer: %d\n",
-        //     enumToString[currToken.tkn_name],
-        //     (stackPointer >= 0
-        //         ? (stack[stackPointer].symbolType == 1
-        //                ? grammar.terminals[stack[stackPointer].value]
-        //                : grammar.nonTerminals[stack[stackPointer].value])
-        //         : "None"),
-        //     stackPointer);
      
         int tokenID = findIndex(grammar.terminals, grammar.numTerminals, enumToString[currToken.tkn_name]); 
         if (stack[stackPointer].symbolType == 1 && stack[stackPointer].value == tokenID) { 
-            // printf("Terminals on top of stack and at lookahead pointer (%s) match at line number %d\n", grammar.terminals[tokenID], currToken.line); 
             
             pointers[stackPointer]->elem.lineNo = currToken.line; 
             if (currToken.tkn_name == TK_NUM) { 
@@ -569,7 +558,6 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
             }
         } 
         else if(stack[stackPointer].symbolType == 1 && stack[stackPointer].value != tokenID) { 
-            // printf("Line No: %d - ERROR: Top of stack is %s and lookahead is %s : Terminals do not match\n", currToken.line, grammar.terminals[stack[stackPointer].value], grammar.terminals[tokenID]); 
             printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s\n",
                 currToken.line,
                 enumToString[currToken.tkn_name],
@@ -583,7 +571,6 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
             }
         } 
         else if(stack[stackPointer].symbolType == 0 && table->entries[stack[stackPointer].value][tokenID].isError != 0) { 
-            // printf("Line No: %d - ERROR: Top of stack is %s(X) and lookahead is %s(a) : ParseTable[X, a] is blank ERROR \n", currToken.line, grammar.nonTerminals[stack[stackPointer].value], grammar.terminals[tokenID]);      
             *errorFlag = 1;
             
             if(!isInArray(grammar.firstFollow[stack[stackPointer].value].follow, tokenID, grammar.firstFollow[stack[stackPointer].value].numFollow)){
@@ -813,41 +800,3 @@ int getRuleNumberFromIndices(int ruleIndex, int alternativeIndex, Grammar gramma
     }
     return c;
 }
-
-// int main(int argc, char *argv[]) {
-//     printf("Hello %d\n",argc);
-//     if(argc < 3) {
-
-//         printf("Usage: %s <sourcefile>\n", argv[0]);
-//         return 1;
-//     }
-
-//     // Read the grammar from a file (assume grammar.txt contains your grammar)
-//     Grammar grammar = readGrammar("grammar.txt");
-//     printf("Hello\n");
-    
-//     // Compute the first-follow sets for the grammar.
-//     grammar.firstFollow = computeFirstFollowSets(grammar);
-
-//     // Initialize and create the parse table.
-//     ParseTable* table = initializeParseTable(grammar.numNonTerminals, grammar.numTerminals);
-//     createParseTable(grammar, grammar.firstFollow, table);
-
-//     int errorFlag = 0;
-//     // Call the parser on your test file t3.txt.
-//     treeN parseTree = parseSourceCode(argv[1], grammar, table, &errorFlag);
-    
-//     if(errorFlag) {
-//         printf("There were syntactic errors in the source code.\n");
-//     } else {
-//         printf("Parsing completed successfully.\n");
-//     }
-
-//     // Optionally, print the parse tree
-//     int count = 0;
-//     printParseTree(&parseTree, grammar, &count);
-
-//     // Free any allocated resources here as needed...
-
-//     return 0;
-// }

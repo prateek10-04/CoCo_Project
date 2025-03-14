@@ -1,9 +1,8 @@
 /*
-ID  2019A7PS0064P					Name Siddharth Sharma
-ID  2019A7PS0062P					Name Atharva Chandak
-ID  2019A7PS0133P					Name Archit Bhatnagar 
-ID  2019A7PS0554P					Name Suchismita Tripathy
-ID  2019A7PS1139P 					Name Srujan Deolasee
+    ID  2022A7PS0144P					Name Prateek Parwani
+    ID  2022A7PS0183P					Name Sarat Srinadhu
+    ID  2022A7PS1178P					Name Sanjay Jampani 
+    ID  2022A7PS1181P					Name Narasimha Naidu
 */
 
 typedef struct node { 
@@ -16,7 +15,7 @@ typedef struct node {
         int numVal; 
         float rVal; 
     } lex; 
-    int ruleNumber;     // This variable stores the rule number used for expansion, 0 means that it is a terminal
+    int ruleNumber;    
 } node; 
 
 typedef struct treeNode {

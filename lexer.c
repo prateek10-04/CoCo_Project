@@ -252,7 +252,6 @@ tokenInfo getNextToken(twinBuffer *B, FILE *fp){
                     dfa_state = 20;
                 }
                 else if(char_match(c,'_')) {
-                    // printf("Hello4\n");
                     dfa_state = 22;
                 }
                 else if(char_match(c,'#')) {

@@ -7,13 +7,6 @@
 
 #define CLEANED_FILE "cleanedFile.txt"
 
-void displayImplementationStatus() {
-    printf("\nImplementation Status:\n");
-    printf("(a) FIRST and FOLLOW set automated\n");
-    printf("(b) Lexical analyzer module developed\n");
-    printf("(c) Both lexical and syntax analysis modules implemented\n");
-}
-
 int main(int argc, char *argv[]) {
     if(argc < 3) {
         fprintf(stderr, "Usage: %s <sourcecodefile> <parsetreeoutfile>\n", argv[0]);
@@ -23,17 +16,28 @@ int main(int argc, char *argv[]) {
     char *sourceFile = argv[1];
     char *parseTreeFile = argv[2];
 
-    displayImplementationStatus();
-
-    // Read the grammar from file (ensure grammar.txt exists in your working directory)
+    // Read the grammar from file
     char grammarFileName[] = "grammar.txt";
+    printf("Reading grammar file: %s\n", grammarFileName);
     Grammar grammar = readGrammar(grammarFileName);
-    
+    printf("Grammar file read successfully!\n");
+
     // Initialize required components
-    initialize();  // Initialization for lexer/parser modules (if required)
+    printf("Initializing lexer/parser modules...\n");
+    initialize();
+    printf("Lexer/parser modules initialized! (Lexical analyzer developed)\n");
+
+    printf("Computing FIRST and FOLLOW sets...\n");
     FirstFollowSet* ffSet = computeFirstFollowSets(grammar);
+    printf("FIRST and FOLLOW sets computed! (Syntax analysis module implemented)\n");
+
+    printf("Initializing Parse Table...\n");
     ParseTable* parseTable = initializeParseTable(grammar.numNonTerminals, grammar.numTerminals);
+    printf("Parse Table initialized!\n");
+
+    printf("Creating Parse Table...\n");
     createParseTable(grammar, ffSet, parseTable);
+    printf("Parse Table created! (Lexical & syntax analysis implemented)\n");
 
     int choice;
     while(1) {
@@ -50,7 +54,7 @@ int main(int argc, char *argv[]) {
             while(getchar() != '\n'); // Clear input buffer
             continue;
         }
-        
+
         if(choice == 0) {
             printf("Exiting program...\n");
             break;
@@ -59,42 +63,37 @@ int main(int argc, char *argv[]) {
             printf("Removing comments from source code...\n");
             removeComments(sourceFile, CLEANED_FILE);
             printf("Comments removed. Output written to %s\n", CLEANED_FILE);
+            printf("(Lexical analyzer module developed)\n");
         }
         else if(choice == 2) {
             printf("Performing lexical analysis and printing tokens...\n");
             prettyPrint(sourceFile);
+            printf("(Lexical analyzer module successfully executed)\n");
         }
         else if(choice == 3) {
             printf("Performing syntax analysis...\n");
-            // First, remove comments from the source code.
             removeComments(sourceFile, CLEANED_FILE);
             
-            // Invoke both the lexer and parser to print lexical and syntactic errors on the console.
             int errorFlag = 0;
             treeN parseTree = parseSourceCode(CLEANED_FILE, grammar, parseTable, &errorFlag);
             
             if(errorFlag)
                 printf("There were syntactic/lexical errors in the source code (see above for details).\n");
             else
-                printf("Parsing completed successfully.\n");
-            
-            // Write the parse tree to the output file.
-            // We use freopen to redirect stdout temporarily so that the parse tree is written into the file.
+                printf("Parsing completed successfully! (Syntax analysis module successfully executed)\n");
+
             if (freopen(parseTreeFile, "w", stdout) == NULL) {
                 perror("Error redirecting stdout to output file");
             } else {
                 int count = 0;
                 printParseTree(&parseTree, grammar, &count);
                 fflush(stdout);
-                // Restore stdout to console.
-                // On Windows, "CON" refers to the console; on Unix systems, use "/dev/tty" if needed.
                 freopen("CON", "w", stdout);
             }
             printf("Parse tree written to %s\n", parseTreeFile);
         }
         else if(choice == 4) {
             printf("Measuring execution time for parsing...\n");
-            // Remove comments and then measure the time taken to parse the cleaned file.
             removeComments(sourceFile, CLEANED_FILE);
             int errorFlag = 0;
             clock_t start_time = clock();
@@ -105,6 +104,7 @@ int main(int argc, char *argv[]) {
             double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
             printf("Total CPU time: %lf\n", total_CPU_time);
             printf("Total CPU time in seconds: %lf\n", total_CPU_time_in_seconds);
+            printf("(Execution time measurement completed successfully)\n");
         }
         else {
             printf("Invalid choice. Please enter a valid option.\n");

@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
             int errorFlag = 0;
             clock_t start_time = clock();
             treeN parseTree = parseSourceCode(CLEANED_FILE, grammar, parseTable, &errorFlag);
+            (void) parseTree;
             clock_t end_time = clock();
             double total_CPU_time = (double)(end_time - start_time);
             double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;

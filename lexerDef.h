@@ -9,7 +9,6 @@
 #define LEXER_DEF
 #define BUFFER_SIZE 4096
 #define MAX_LEXEME 400
-// #include "lookuptable.h"
 #include<stdio.h>
 #include<stdlib.h>
 typedef struct twinBuffer twinBuffer;
@@ -20,18 +19,12 @@ struct twinBuffer{
     char *buffer;
     int forward;
     int lexemeBegin;
-    int pos;    // position at which character should be added to lexeme
+    int pos;   
     char *lexeme;
 };
 int lexError, lineNo;
-/*
-0- no error
-1- unknown symbol
-2- unknown pattern
-3- length exceeded  
-*/
+
 typedef enum token_name{
-    // tokens list
     TK_ASSIGNOP,
     TK_COMMENT,
     TK_FIELDID,
@@ -89,7 +82,7 @@ typedef enum token_name{
     TK_GT,
     TK_GE,
     TK_NE,
-    ERROR,   // special token when error is encountered
+    ERROR,   
     TK_EOF,
 }token_name;
 
@@ -101,23 +94,13 @@ typedef struct TOKEN{
     int line;
     token_name tkn_name;
     struct value{
-        int num;        // numeric value of int
+        int num;        
         struct rnum{
-            char *rep;  // string form of reals
-            float v;    // numeric value of int
+            char *rep;  
+            float v;    
         }rnum;
-        char * str; // lexeme, identifiers
+        char * str;
     }value;
 }tokenInfo;
-twinBuffer *twin_buffer;    // buffer the lexer
+twinBuffer *twin_buffer;    
 #endif
-
-/*
-To Do:
-
-1. Hash Table/ Symbol Table
-2. getnextToken
-
-
-
-*/

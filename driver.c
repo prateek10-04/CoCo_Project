@@ -1,3 +1,10 @@
+/*
+    ID  2022A7PS0144P					Name Prateek Parwani
+    ID  2022A7PS0183P					Name Sarat Srinadhu
+    ID  2022A7PS1178P					Name Sanjay Jampani 
+    ID  2022A7PS1181P					Name Narasimha Naidu
+*/
+
 #include "lexer.h"
 #include "parser.h"
 #include <stdio.h>

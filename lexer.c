@@ -11,10 +11,6 @@
 #include <ctype.h>
 
 /*
-Tokens are present between lexemeBegin and forward (inclusive)
-*/
-
-/*
     checks if two characters match
 */
 int char_match(char a, char b){
@@ -41,9 +37,8 @@ int range_match(char a, char start, char end) {
 }
 
 /*
-    This function is used when a token is valid.
-    The way forward, lexemeBegin, and the strings are returned depends on whether the last character of twin_buffer->lexeme is useful or not
-    In all of the cases accept(false,B) is preceded by reset(1,B)
+    Function accepts a valid lexeme from the buffer and returns it as a string.  
+    Resets DFA state and buffer positions after extraction.  
 */
 
 char* accept(bool isLastUseful,twinBuffer *B) {
@@ -80,7 +75,7 @@ char* accept(bool isLastUseful,twinBuffer *B) {
 
 
 /*
-    This function is used to return erroneous lexemes. reset(1,B) is called before reject(B) to reset t,Bhe forward 
+    This function is used to return erroneous lexemes. reset(1,B) is called before reject(B) to reset the forward 
     pointer for tokenizing other tokens.
 */
 

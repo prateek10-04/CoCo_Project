@@ -7,6 +7,8 @@
 
 #include "utils.h"
 
+
+// Finds the index of a target string in an array, returns index or -1 if not found.
 int findIndex(char** array, int size,const char* target) {
     for (int i = 0; i < size; i++) {
         if (strcmp(target, array[i]) == 0) {
@@ -16,12 +18,14 @@ int findIndex(char** array, int size,const char* target) {
     return -1;
 }
 
+// Prints all elements of a string array.
 void printArray(char** array, int size) {
     for (int i = 0; i < size; i++) {
         printf("%s\n", array[i]);
     }
 }
 
+// Checks if a number exists in an integer array, returns 1 if found, else 0.
 int isInArray(int* array, int num, int size) {
     for (int i = 0; i < size; i++) {
         if (num == array[i]) {
@@ -31,6 +35,7 @@ int isInArray(int* array, int num, int size) {
     return 0;
 }
 
+// Prints a specific grammar rule, supporting all or a specific alternative.
 void printRule(Grammar grammarObj, int ruleIndex, int alternativeIndex) {
     printf("\nPrinting rule number: %d\n", grammarObj.rules[ruleIndex].ruleNumber);
     printf("LHS: %s\n", grammarObj.nonTerminals[grammarObj.rules[ruleIndex].leftHandSide]);
@@ -58,6 +63,7 @@ void printRule(Grammar grammarObj, int ruleIndex, int alternativeIndex) {
     }
 }
 
+// Prints the entire grammar in a structured format.
 void prettyPrintGrammar(Grammar grammarObj) {
     for (int i = 0; i < grammarObj.totalRules; i++) {
         printf("Rule Number: %d ", i);

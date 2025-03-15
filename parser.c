@@ -20,6 +20,8 @@ char* terminalSymbols[] = {
 
 int totalTerminals = 59;
 
+/*Reads the grammar from a file and builds a Grammar object with terminals, non-terminals, and production rules*/
+
 Grammar readGrammar(char* filename) {
     Grammar grammarObj;
     char** nonTerminalList = (char**)malloc(sizeof(char*) * 1);
@@ -126,7 +128,7 @@ Grammar readGrammar(char* filename) {
     fclose(filePtr);
     return grammarObj;
 }
-
+/*Computes the FIRST set for a specific non-terminal based on its production alternatives*/
 void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int ntIndex) {
     int altCount = grammar.rules[ntIndex].numAlternatives;
     for (int altIndex = 0; altIndex < altCount; altIndex++) {
@@ -193,6 +195,7 @@ void computeIndividualFirst(Grammar grammar, FirstFollowSet* firstFollow, int nt
         }
     }
 }
+/*Computes the FOLLOW set for a given non-terminal using grammar rules and previously computed sets.*/
 void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, int prevIdx) {
     if (ntIdx == 0) {
         ffSet[ntIdx].follow = (int*)malloc(sizeof(int));
@@ -313,7 +316,7 @@ void computeIndividualFollow(Grammar grammar, FirstFollowSet* ffSet, int ntIdx, 
         }
     }
 }
-
+// This function computes FIRST and FOLLOW sets for all non-terminals in the grammar.
 FirstFollowSet* computeFirstFollowSets(Grammar grammar) {
     FirstFollowSet* sets = (FirstFollowSet*)malloc(sizeof(FirstFollowSet) * grammar.numNonTerminals);
     for (int i = 0; i < grammar.numNonTerminals; i++) {
@@ -333,7 +336,7 @@ FirstFollowSet* computeFirstFollowSets(Grammar grammar) {
     }
     return sets;
 }
-
+// This function displays the parse table by printing non-error entries.
 void displayParseTable(Grammar grammar, ParseTable* table) {
     int tot = 0;
     for (int i = 0; i < grammar.numNonTerminals; i++) {
@@ -345,7 +348,7 @@ void displayParseTable(Grammar grammar, ParseTable* table) {
         }
     }
 }
-
+// This function initializes and allocates memory for the parse table.
 ParseTable* initializeParseTable(int numNonTerminals, int numTerminals) {
     ParseTable* table = (ParseTable*)malloc(sizeof(ParseTable));
     table->entries = (ParseTableEntry**)malloc(sizeof(ParseTableEntry*) * numNonTerminals);
@@ -361,7 +364,7 @@ ParseTable* initializeParseTable(int numNonTerminals, int numTerminals) {
     }
     return table;
 }
-
+// This function fills the parse table using grammar rules and FIRST/FOLLOW sets.
 void createParseTable(Grammar grammar, FirstFollowSet* firstFollow, ParseTable* table) {
     int index;
     for (int i = 0; i < grammar.totalRules; i++) {
@@ -394,7 +397,7 @@ void createParseTable(Grammar grammar, FirstFollowSet* firstFollow, ParseTable* 
         }
     }
 }
-
+// This function checks if a token is a synchronization token for error recovery.
 int isSyncToken(tokenInfo token) {
     if (token.tkn_name == TK_SEM ||
         token.tkn_name == TK_END ||
@@ -407,7 +410,7 @@ int isSyncToken(tokenInfo token) {
     }
     return 0;
 }
-
+// This function skips tokens until a synchronization token is reached
 tokenInfo skipToSync(twinBuffer *B, FILE *fp) {
     tokenInfo token = getNextToken(B, fp);
     
@@ -417,7 +420,7 @@ tokenInfo skipToSync(twinBuffer *B, FILE *fp) {
     return token;
 }
 
-
+// This function parses the source code using the grammar and builds the parse tree.
 treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int* errorFlag) { 
     printf("Parsing input source code...\n");
     FILE *fp = fopen(sourceFile, "r");
@@ -629,7 +632,7 @@ treeN parseSourceCode(char* sourceFile, Grammar grammar, ParseTable* table, int*
     clearTwinBuffer(B);
     return root; 
 } 
-
+// This function performs an in-order traversal of the parse tree and prints node details.
 void inOrderTraversal(treeN* node, Grammar grammar, int *count, FILE *outFile) {   
     char *str;
     char *nt;
@@ -779,7 +782,7 @@ void inOrderTraversal(treeN* node, Grammar grammar, int *count, FILE *outFile) {
     }
     (*count)++;
 }
-
+// This function prints the parse tree by invoking an in-order traversal.
 void printParseTree(treeN* root, Grammar grammar, int *count, FILE *outFile) {
     fprintf(outFile, "Printing the parse tree inorder:\n");  
     if (root == NULL) {
@@ -789,7 +792,7 @@ void printParseTree(treeN* root, Grammar grammar, int *count, FILE *outFile) {
     inOrderTraversal(root, grammar, count, outFile);  
 }
 
-
+// This function computes the overall rule number from given rule and alternative indices.
 int getRuleNumberFromIndices(int ruleIndex, int alternativeIndex, Grammar grammar){
     int c = 0;
     for(int i = 0; i < grammar.totalRules; i++){

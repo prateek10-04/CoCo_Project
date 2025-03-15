@@ -7,6 +7,8 @@
 
 #include "lookuptable.h"
 #include "lookuptableDef.h"
+
+// Returns the number of digits in an integer.
 int maxLen(int a){
     int count =0;
     while(a>0){
@@ -15,6 +17,8 @@ int maxLen(int a){
     }
     return count;
 }
+
+// Implements Karatsuba multiplication algorithm recursively.
 int kmult(int a, int b){
     if(a<10 || b<10) return a*b;
     int n = maxLen(a>b?a:b);
@@ -28,13 +32,15 @@ int kmult(int a, int b){
     return a_high_b_high*binExpo(10,2*ten_power_n_by_2) + (kmult(a_high, b_low) + kmult(a_low, b_high))*ten_power_n_by_2+a_low_b_low;
 
 }
+
+// Implements binary exponentiation to compute (a^b).
 int binExpo(int a, int b) {
     if (!b) return 1;
     if (b % 2) return a * binExpo(a, (b - 1) / 2);
     return binExpo(a, b / 2);
 }
 
-
+// Computes the first hash value using a polynomial rolling hash function.
 int h1(char *lexeme){
     int val=0;
     for(int i=0;i<strlen(lexeme);i++){
@@ -43,13 +49,19 @@ int h1(char *lexeme){
     }
     return val;
 }
+
+// Computes the second hash value for double hashing.
 int h2(int h1_hashvalue){
     return 1+(h1_hashvalue%(HASH_SIZE-1));
 }
+
+// Computes the final hash value using double hashing.
 int hash(char *lexeme, int i){
     int x =h1(lexeme);
     return (x+i*h2(x))%HASH_SIZE;
 }
+
+// Searches for a lexeme in the hash table and returns its index if found, else -1.
 int search(char * lexeme){
     int i =0;
     int j = hash(lexeme, i);
@@ -61,6 +73,7 @@ int search(char * lexeme){
     return -1;
 }
 
+// Inserts a lexeme into the hash table with its corresponding token.
 int insert(char *lexeme, token_name tkn) {
     int i = 0;
     int j;
@@ -81,6 +94,7 @@ int insert(char *lexeme, token_name tkn) {
     return -1;
 }
 
+// Initializes the lookup table with keywords from a file.
 void initialize(){
     FILE *fp = fopen("keywords_lexemes.txt","r");
     char str[20]="";

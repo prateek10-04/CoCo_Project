@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Creates a new element (node) with given properties and initializes lexeme string for non-leaf nodes.
 node createEl(int lineNo, int parentSymbolID, int symbolID, int isLeafNode, int expansionRule) { 
     node newElement; 
     newElement.lineNo = lineNo; 
@@ -24,6 +25,7 @@ node createEl(int lineNo, int parentSymbolID, int symbolID, int isLeafNode, int 
     return newElement; 
 }
 
+// Creates a new tree node with given element and initializes lexeme values based on terminal type.
 treeN createNode(node el, Grammar G) {
     treeN newNode; 
 
@@ -44,6 +46,7 @@ treeN createNode(node el, Grammar G) {
     return newNode;
 }
 
+// Adds a child node to a parent node, reallocating memory if necessary.
 void addChild(treeN* parent, treeN* child) {
     if (parent->numChild != 0) { 
         parent->children = (treeN**) realloc(parent->children, sizeof(treeN*) * (parent->numChild + 1)); 
